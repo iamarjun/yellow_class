@@ -10,16 +10,19 @@ class VideoPlayerWidget extends StatefulWidget {
 
 class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   VideoPlayerController _controller;
+  double _volume;
 
   @override
   void initState() {
     super.initState();
+    _volume = 0.5;
     _controller = VideoPlayerController.network(
         'https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1920_18MG.mp4')
       ..initialize().then((_) {
         // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
         setState(() {});
       });
+    _controller.setLooping(true);
   }
 
   @override
@@ -30,7 +33,33 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
           child: _controller.value.initialized
               ? AspectRatio(
                   aspectRatio: _controller.value.aspectRatio,
-                  child: VideoPlayer(_controller),
+                  child: Stack(
+                    children: [
+                      VideoPlayer(_controller),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: RotatedBox(
+                          quarterTurns: 3,
+                          child: Container(
+                            height: 100.0,
+                            child: Slider(
+                              value: _volume,
+                              onChanged: (value) {
+                                setState(() {
+                                  _volume = value;
+                                  _controller.setVolume(_volume);
+                                });
+                              },
+                              min: 0.0,
+                              max: 1.0,
+                              divisions: 10,
+                              label: "$_volume",
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 )
               : Container(),
         ),
@@ -55,5 +84,4 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     super.dispose();
     _controller.dispose();
   }
-
 }
