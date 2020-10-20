@@ -27,9 +27,9 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: Center(
+    return Stack(
+      children: [
+        Center(
           child: _controller.value.initialized
               ? AspectRatio(
                   aspectRatio: _controller.value.aspectRatio,
@@ -37,7 +37,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                     children: [
                       VideoPlayer(_controller),
                       Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.centerRight,
                         child: RotatedBox(
                           quarterTurns: 3,
                           child: Container(
@@ -63,19 +63,22 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                 )
               : Container(),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            setState(() {
-              _controller.value.isPlaying
-                  ? _controller.pause()
-                  : _controller.play();
-            });
-          },
-          child: Icon(
-            _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
+        Align(
+          alignment: Alignment.center,
+          child: FloatingActionButton(
+            onPressed: () {
+              setState(() {
+                _controller.value.isPlaying
+                    ? _controller.pause()
+                    : _controller.play();
+              });
+            },
+            child: Icon(
+              _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
+            ),
           ),
         ),
-      ),
+      ],
     );
   }
 
